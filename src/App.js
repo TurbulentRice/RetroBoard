@@ -1,5 +1,8 @@
 import logo from './logo.svg';
 import './App.css';
+import RetroBoard from './components/RetroBoard';
+import NavBar from './components/NavBar';
+import { StoriesProvider } from './contexts/StoriesContext'
 
 /* 
   This is the top of retroboard app
@@ -15,17 +18,25 @@ import './App.css';
 
 */
 
-
 function App() {
+  /*
+    App will handle the "user" name and ID?
+    May not keep anything in state, since it will be the RetroBoard itself that will
+    store the Tasks in state.
+  */
   return (
-    <div className="App">
-      <header className="App-header">
-        <h1> Retro Board </h1>
-        <img src={logo} className="App-logo" alt="logo" />
+    <StoriesProvider>
+      <div className="App">
+        <header>
+          
+          <NavBar logo={logo}></NavBar>
+          
+        </header>
 
-      </header>
-      
-    </div>
+        <RetroBoard></RetroBoard>
+        
+      </div>
+    </StoriesProvider>
   );
 }
 
