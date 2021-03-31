@@ -1,12 +1,9 @@
 import { createContext, useState } from 'react';
+import { getUID, getNow } from '../lib/helpers';
 
 export const StoriesContext = createContext();
 
 export function StoriesProvider({ children }) {
-  // Unique ID generator
-  // Got this from https://stackoverflow.com/a/21816636
-  const getUID = () => Math.floor(100000 + Math.random() * 900000);
-
   // Keep track of all stories in single array of objects, no inherent order, like bucket
   // Components will "pick out" stories relevant to them based on state/id
   const [stories, setStories] = useState([
@@ -16,7 +13,8 @@ export function StoriesProvider({ children }) {
       owner: "Louise Belcher",
       description: "Fix issue with multi-factor authentication",
       points: 3,
-      state: 1
+      col: 1,
+      created: getNow()
     },
     {
       title: "Push code to production",
@@ -24,7 +22,8 @@ export function StoriesProvider({ children }) {
       owner: "Louise Belcher",
       description: "Commit new changes and deploy to production server.",
       points: 2,
-      state: 2
+      col: 2,
+      created: getNow()
     },
     {
       title: "Fix major security issue",
@@ -32,7 +31,8 @@ export function StoriesProvider({ children }) {
       owner: "A Person",
       description: "Get that thing done",
       points: 6,
-      state: 3
+      col: 3,
+      created: getNow()
     },
     {
       title: "Fix major security issue",
@@ -40,9 +40,9 @@ export function StoriesProvider({ children }) {
       owner: "A Person",
       description: "Get that thing done",
       points: 6,
-      state: 3
+      col: 3,
+      created: getNow()
     },
-    
   ]);
 
   return (
