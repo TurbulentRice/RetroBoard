@@ -20,18 +20,14 @@ import { StoriesProvider } from './contexts/StoriesContext'
 
 function App() {
   /*
-    App will handle the "user" name and ID?
-    May not keep anything in state, since it will be the RetroBoard itself that will
-    store the Tasks in state.
+    App will just handle presenting main components
+    RetroBoard and StoryColumns will store the stor
   */
   return (
     <StoriesProvider>
       <div className="App">
-        <header>
-          
-          <NavBar logo={logo}></NavBar>
-          
-        </header>
+
+        <NavBar logo={logo}></NavBar>
 
         <RetroBoard></RetroBoard>
         
