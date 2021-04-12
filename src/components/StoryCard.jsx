@@ -1,5 +1,6 @@
 import { StoriesContext } from '../contexts/StoriesContext'
 import { useState, useContext } from 'react';
+import { useDrag } from 'react-dnd';
 /*
 story = {
   title: "",
@@ -8,35 +9,38 @@ story = {
   points: Number,
   id: Number,
   col: Number,
+  row: Number,
   created: Date
 }
 */
 
 function StoryCard ({ story }) {
-  // This component needs access to setStories from RetroBoard
   const { setStories } = useContext(StoriesContext);
-  const [ editMode, setEditMode ] = useState(false);
-  // Edited stories stored here so as to not destroy original
-  // Initialize to story prop
+
+  // Temporary story input data - initialized to shallow copy of story prop
   const [ editedStory, setEditedStory ] = useState({ ...story });
+  // Changes <p>s to controlled <input>s to update editedStory
+  const [ editMode, setEditMode ] = useState(false);
+
+  const [{ isDragging }, drag] = useDrag({
+    type: 'card',
+    item: {
+      type: 'card',
+      id: story.id
+    },
+    collect: monitor => ({
+      isDragging: !!monitor.isDragging()
+    })
+  });
 
   const resetEditedStory = () => setEditedStory({ ...story });
-
-  // change <p>s to controlled <input>s
-  const toggleEditMode = () => {
-    setEditMode(!editMode);
-    // also remove any changes made to editedStory
-    // reset && resetEditedStory();
-  };
-
   const handleEdit = () => {
     resetEditedStory();
     toggleEditMode();
   }
+  const toggleEditMode = () => setEditMode(!editMode);
 
-  // Save editedStory as new story
   const handleSave = event => {
-
     event.preventDefault();
     setStories(currentStories => {
       return currentStories.map(currentStory => {
@@ -47,19 +51,33 @@ function StoryCard ({ story }) {
     })
     editMode && toggleEditMode();
   }
-
-  // Filter this story out of state via updater function
   const handleRemove = () => setStories(currentStories => currentStories.filter(currentStory => currentStory.id !== story.id));
 
-  const drag = event => {
-    event.dataTransfer.setData('object', story)
-  }
+  // const drag = event => {
+  //   event.dataTransfer.setData('text', JSON.stringify(story))
+  // }
+  // const allowDrop = event => event.preventDefault();
+  // const drop = event => {
+  //   event.preventDefault();
+  //   const droppedStory =  JSON.parse(event.dataTransfer.getData('text'));
+  //   console.log(droppedStory);
+  //   // event.target.appendChild(document.getElementById(data))
+
+  //   // Instead of dropping the action DOM element, we'll simply change the colID
+  //   if (droppedStory.col !== story.colID) {
+  //     // setStories()
+  //   }
+  // }  
+
+  // Need  dnd context for this
 
   return (
     <div id={story.id}
+      ref={drag}
       className="card text-start mb-3"
       draggable={true}
-      onDragStart={e => drag(e)}>
+      // onDragStart={e => drag(e)}
+      opacity={isDragging ? '0.5' : '1'}>
 
       {/* Header */}
       <div className="card-header d-flex justify-content-between"> 
@@ -76,17 +94,19 @@ function StoryCard ({ story }) {
 
       </div>
 
-      {/* Change out card Body depending on editMode */}
-      {!editMode ? 
+      {
+      // Normal mode card body
+      !editMode ?
+      
       <div className="card-body pt-1">
         <small className="card-text text-muted mb-1">{`Owner: ${story.owner}`}</small>
         <p className="card-text lead mb-1">{story.title}</p>
         <p className="card-text">{story.description}</p>
       </div>
 
-      // Edit Mode
+      // Edit Mode card body
       :
-
+      
       <div className="card-body">
         <form id={`edit-mode-form-${story.id}`} className="form-group" onSubmit={e => handleSave(e)}>
 
@@ -129,9 +149,7 @@ function StoryCard ({ story }) {
           <i className="fad fa-trash"></i>
         </button>
       </div>
-
     </div>
-
   )
 }
 
