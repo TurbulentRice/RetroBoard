@@ -15,12 +15,16 @@ story = {
 */
 
 function StoryCard ({ story }) {
-  const { setStories } = useContext(StoriesContext);
+  const { removeStory, saveStory } = useContext(StoriesContext);
 
   // Temporary story input data - initialized to shallow copy of story prop
   const [ editedStory, setEditedStory ] = useState({ ...story });
   // Changes <p>s to controlled <input>s to update editedStory
   const [ editMode, setEditMode ] = useState(false);
+
+  // Points methods will just use saveStory
+  const increasePoints = () => saveStory({...story, points: (story.points + 1) > 9 ? story.points : story.points + 1})
+  const decreasePoints = () => saveStory({...story, points: (story.points - 1) < 0 ? story.points : story.points - 1})
 
   const [{ isDragging }, drag] = useDrag({
     type: 'card',
@@ -40,36 +44,14 @@ function StoryCard ({ story }) {
   }
   const toggleEditMode = () => setEditMode(!editMode);
 
+  // const saveStory = (storyToSave) => setStories(currentStories => currentStories.map(currentStory => {
+  //   return currentStory.id === storyToSave.id ? { ...storyToSave} : currentStory;
+  // }));
   const handleSave = event => {
     event.preventDefault();
-    setStories(currentStories => {
-      return currentStories.map(currentStory => {
-        return currentStory.id === story.id 
-          ? { ...editedStory }
-          : currentStory;
-      })
-    })
+    saveStory(editedStory);
     editMode && toggleEditMode();
   }
-  const handleRemove = () => setStories(currentStories => currentStories.filter(currentStory => currentStory.id !== story.id));
-
-  // const drag = event => {
-  //   event.dataTransfer.setData('text', JSON.stringify(story))
-  // }
-  // const allowDrop = event => event.preventDefault();
-  // const drop = event => {
-  //   event.preventDefault();
-  //   const droppedStory =  JSON.parse(event.dataTransfer.getData('text'));
-  //   console.log(droppedStory);
-  //   // event.target.appendChild(document.getElementById(data))
-
-  //   // Instead of dropping the action DOM element, we'll simply change the colID
-  //   if (droppedStory.col !== story.colID) {
-  //     // setStories()
-  //   }
-  // }  
-
-  // Need  dnd context for this
 
   return (
     <div id={story.id}
@@ -95,12 +77,32 @@ function StoryCard ({ story }) {
       </div>
 
       {
+
+      !editMode
+
       // Normal mode card body
-      !editMode ?
+      ?
       
       <div className="card-body pt-1">
-        <small className="card-text text-muted mb-1">{`Owner: ${story.owner}`}</small>
-        <p className="card-text lead mb-1">{story.title}</p>
+        <div className="row">
+          <div className="col-8">
+            <small className="card-text text-muted mb-1">{`Owner: ${story.owner}`}</small>
+            <p className="card-text lead mb-1">{story.title}</p>
+          </div>
+          <div className="col-1">
+            <h4 className="card-text lead mt-3">{story.points}</h4>
+          </div>
+          <div className="col-1">
+
+            <button className="btn btn-sm" style={{color: "green"}} onClick={increasePoints}>
+              <i className="fas fa-arrow-up"></i>
+            </button>
+            <button className="btn btn-sm" style={{color: "red"}} onClick={decreasePoints}>
+              <i className="fas fa-arrow-down"></i>
+            </button>
+
+          </div>
+        </div>
         <p className="card-text">{story.description}</p>
       </div>
 
@@ -145,7 +147,7 @@ function StoryCard ({ story }) {
       {/* Footer */}
       <div className="card-footer d-flex justify-content-between">
         <small className="text-muted">Created {story.created}</small>
-        <button className="btn btn-sm btn-light p-0" onClick={handleRemove}>
+        <button className="btn btn-sm btn-light p-0" onClick={() => removeStory(story)}>
           <i className="fad fa-trash"></i>
         </button>
       </div>

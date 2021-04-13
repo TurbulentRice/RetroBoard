@@ -6,16 +6,12 @@ import { StoriesContext } from '../contexts/StoriesContext'
 
 // Receives stories, returns bootstrap col with cards
 function StoryColumn ({ title, colID }) {
-  const { stories, setStories } = useContext(StoriesContext)
-  
-  const addStory = newStory => setStories(currentStories => [newStory, ...currentStories]);
-  const removeStory = storyToRemove => setStories(currentStories => currentStories.filter(story => story.id !== storyToRemove.id))
+  const { stories, addStory, moveStory } = useContext(StoriesContext)
 
   const cardStories = stories.filter(story => story.col === colID);
 
   // Make a new empty story object w/ colID and add to StoryContext
   const handleAddStory = () => addStory(getNewStory({col: colID}));
-
 
   // Accept drop
   const [{ isOver }, drop] = useDrop({
@@ -23,8 +19,7 @@ function StoryColumn ({ title, colID }) {
     drop: (item, monitor) => {
       console.log(item)
       // "Move" story by changing associated colID
-      const newStories = stories.map(story => story.id === item.id ? {...story, col: colID} : story);
-      setStories(newStories);
+      moveStory(item, colID)
     }
     ,
     collect: monitor => ({
