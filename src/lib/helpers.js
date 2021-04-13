@@ -51,11 +51,11 @@ export const getTestStories = () => [
     created: getNow()
   },
   {
-    title: "Fix major security issue",
+    title: "Make a sandwhich",
     id: getUID(),
-    owner: "A Person",
-    description: "Get that thing done",
-    points: 6,
+    owner: "Russell Crowe",
+    description: "I really want a ham and swiss sandwhich. I think i should make one.",
+    points: 1,
     col: 3,
     created: getNow()
   },
