@@ -9,7 +9,6 @@ story = {
   points: Number,
   id: Number,
   col: Number,
-  row: Number,
   created: Date
 }
 */
@@ -19,13 +18,25 @@ function StoryCard ({ story }) {
 
   // Temporary story input data - initialized to shallow copy of story prop
   const [ editedStory, setEditedStory ] = useState({ ...story });
-  // Changes <p>s to controlled <input>s to update editedStory
   const [ editMode, setEditMode ] = useState(false);
 
-  // Points methods will just use saveStory
+  const resetEditedStory = () => setEditedStory({ ...story });
+  const handleEdit = () => {
+    resetEditedStory();
+    toggleEditMode();
+  }
+  const toggleEditMode = () => setEditMode(!editMode);
+  const handleSave = event => {
+    event.preventDefault();
+    saveStory(editedStory);
+    editMode && toggleEditMode();
+  }
+
+  // Points methods will use saveStory too
   const increasePoints = () => saveStory({...story, points: (story.points + 1) > 9 ? story.points : story.points + 1})
   const decreasePoints = () => saveStory({...story, points: (story.points - 1) < 0 ? story.points : story.points - 1})
 
+  // Drag n drop stuff
   const [{ isDragging }, drag] = useDrag({
     type: 'card',
     item: {
@@ -37,22 +48,6 @@ function StoryCard ({ story }) {
     })
   });
 
-  const resetEditedStory = () => setEditedStory({ ...story });
-  const handleEdit = () => {
-    resetEditedStory();
-    toggleEditMode();
-  }
-  const toggleEditMode = () => setEditMode(!editMode);
-
-  // const saveStory = (storyToSave) => setStories(currentStories => currentStories.map(currentStory => {
-  //   return currentStory.id === storyToSave.id ? { ...storyToSave} : currentStory;
-  // }));
-  const handleSave = event => {
-    event.preventDefault();
-    saveStory(editedStory);
-    editMode && toggleEditMode();
-  }
-
   return (
     <div id={story.id}
       ref={drag}
@@ -63,7 +58,18 @@ function StoryCard ({ story }) {
 
       {/* Header */}
       <div className="card-header d-flex justify-content-between"> 
-        {`#${story.id}`}
+        {`ID#${story.id}`}
+
+        <label> {story.points}
+            <button className="btn btn-sm m-0" style={{color: "green"}} onClick={increasePoints}>
+              <i className="fas fa-arrow-up"></i>
+            </button>
+            <button className="btn btn-sm m-0" style={{color: "red"}} onClick={decreasePoints}>
+              <i className="fas fa-arrow-down"></i>
+            </button>
+        </label>
+            
+
 
         <div>
           <button type='submit' htmlFor={`edit-mode-form-${story.id}`} className="btn btn-sm btn-light p-0 me-2" onClick={handleSave}>
@@ -73,35 +79,21 @@ function StoryCard ({ story }) {
             <i className="fal fa-edit"></i>
           </button>
         </div>
-
+        
       </div>
 
-      {
-
-      !editMode
+      {!editMode
 
       // Normal mode card body
       ?
       
       <div className="card-body pt-1">
         <div className="row">
-          <div className="col-8">
+          <div className="col">
             <small className="card-text text-muted mb-1">{`Owner: ${story.owner}`}</small>
             <p className="card-text lead mb-1">{story.title}</p>
           </div>
-          <div className="col-1">
-            <h4 className="card-text lead mt-3">{story.points}</h4>
-          </div>
-          <div className="col-1">
 
-            <button className="btn btn-sm" style={{color: "green"}} onClick={increasePoints}>
-              <i className="fas fa-arrow-up"></i>
-            </button>
-            <button className="btn btn-sm" style={{color: "red"}} onClick={decreasePoints}>
-              <i className="fas fa-arrow-down"></i>
-            </button>
-
-          </div>
         </div>
         <p className="card-text">{story.description}</p>
       </div>
