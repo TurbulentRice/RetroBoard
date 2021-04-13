@@ -1,16 +1,17 @@
-# Retro Board ![Parrot Logo](./public/favicon.ico)
+# ![Parrot Logo](./public/favicon.ico) [Retro Board](https://turbulentrice.github.io/RetroBoard/)
 
 ## Overview
 
-A clean and simple productivity app!
+A simple productivity app!
 
 ### Features:
 
-- Add new stories, edit and remove existing stories.
-- "Point" system automatically arranges stories by integer value (priority, difficulty, etc...)
-- Move cards between columns via drag-n-drop
+- Add new stories, edit, and remove existing stories.
+- "Point" system automatically arranges stories by importance.
+- Increase or decrease points to move cards up or down intra-column.
+- Move cards between columns via drag-n-drop.
 
-![Example image](./src/example.png)
+![Example image](./src/example1.png)
 
 ## Start
 
