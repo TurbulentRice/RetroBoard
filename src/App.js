@@ -6,14 +6,6 @@ import { StoriesProvider } from './contexts/StoriesContext'
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend} from 'react-dnd-html5-backend'
 
-/* 
-  This is the top of retroboard app
-  Requirements:
-  1) What went well
-  2) To imporove
-  3) Actions items
-*/
-
 function App() {
   /*
     App will just handle presenting main components

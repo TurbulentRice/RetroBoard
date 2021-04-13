@@ -8,7 +8,10 @@ import { StoriesContext } from '../contexts/StoriesContext'
 function StoryColumn ({ title, colID }) {
   const { stories, addStory, moveStory } = useContext(StoriesContext)
 
-  const cardStories = stories.filter(story => story.col === colID);
+  // Filter by col, Sort by points
+  const cardStories = () => stories.filter(story => story.col === colID).sort((firstCard, secondCard) => {
+    return secondCard.points - firstCard.points
+  });
 
   // Make a new empty story object w/ colID and add to StoryContext
   const handleAddStory = () => addStory(getNewStory({col: colID}));
@@ -22,8 +25,9 @@ function StoryColumn ({ title, colID }) {
       moveStory(item, colID)
     }
     ,
+    // Change this to change how items interact when hovering
     collect: monitor => ({
-      isOver: !!monitor.isOver()
+      isOver: !!monitor.isOver(),
     })
   })
 
@@ -35,7 +39,7 @@ function StoryColumn ({ title, colID }) {
         <button className="btn btn-sm btn-success mb-2" type='button' onClick={handleAddStory}>+</button>
       </div>
       
-      {stories.map((story, index) => story.col === colID && <StoryCard story={story} key={index}></StoryCard>)}
+      {cardStories().map((story, index) => <StoryCard story={story} key={index}></StoryCard>)}
       
     </div>
   )
